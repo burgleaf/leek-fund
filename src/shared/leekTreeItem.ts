@@ -1,8 +1,10 @@
 import { join } from 'path';
 import { ExtensionContext, TreeItem, TreeItemCollapsibleState } from 'vscode';
 import globalState from '../globalState';
+import { DEFAULT_LABEL_FORMAT } from './constant';
+import { LeekFundConfig } from './leekConfig';
 import { FundInfo, IconType } from './typed';
-import { formatTreeText } from './utils';
+import { formatLabelString, formatTreeText } from './utils';
 
 export class LeekTreeItem extends TreeItem {
   info: FundInfo;
@@ -30,6 +32,7 @@ export class LeekTreeItem extends TreeItem {
       volume,
       amount = 0,
       earnings,
+      earningPercent,
       time,
       isStop,
       t2,
@@ -90,24 +93,46 @@ export class LeekTreeItem extends TreeItem {
     let text = '';
     if (showLabel) {
       if (isStock) {
-        const risePercent = isStop
-          ? formatTreeText('停牌', 11)
-          : formatTreeText(`${_percent}%`, 11);
+        const risePercent = isStop ? '停牌' : `${_percent}%`;
         if (type === 'nodata') {
           text = info.name;
         } else {
-          text = `${!isIconPath ? iconPath : ''}${risePercent}${formatTreeText(
+          /* text = `${!isIconPath ? iconPath : ''}${risePercent}${formatTreeText(
             price,
             15
-          )}「${name}」`;
+          )}「${name}」`; */
+          text = formatLabelString(
+            globalState.labelFormat?.['sidebarStockLabelFormat'] ??
+              DEFAULT_LABEL_FORMAT.sidebarStockLabelFormat,
+            {
+              ...info,
+              icon: !isIconPath ? iconPath : '',
+              percent: risePercent,
+            }
+          );
         }
       } else {
-        text =
+        /* text =
           `${!isIconPath ? iconPath : ''}${formatTreeText(`${_percent}%`)}「${name}」${
             t2 || !(globalState.showEarnings && amount > 0)
               ? ''
-              : `(${grow ? '盈' : '亏'}：${earnings})`
-          }` + `${t2 ? `(${time})` : ''}`;
+              : `(${grow ? '盈' : '亏'}：${grow ? '+' : ''}${earnings})`
+          }` + `${t2 ? `(${time})` : ''}`; */
+        text = formatLabelString(
+          globalState.labelFormat?.['sidebarFundLabelFormat'] ??
+            DEFAULT_LABEL_FORMAT.sidebarFundLabelFormat,
+          {
+            ...info,
+            icon: !isIconPath ? iconPath : '',
+            percent: `${_percent}%`,
+            earnings:
+              t2 || !(globalState.showEarnings && amount > 0)
+                ? ''
+                : `(${grow ? '盈' : '亏'}：${grow ? '+' : ''}${earnings})`,
+            time: t2 ? `(${time})` : '',
+          }
+        );
+        // ${earningPercent !== 0 ? '，率：' + earningPercent + '%' : ''}
       }
     } else {
       text = isStock

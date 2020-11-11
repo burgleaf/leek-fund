@@ -15,16 +15,19 @@
 
 ## Table of contents
 
-- [功能特性](#功能特性)
-- [安装使用](#安装使用)
-- [插件介绍](#插件介绍)
-- [插件设置](#插件设置)
-- [交流群](#交流群)
-- [Todo List](#todo-list)
-- [感谢 PR](#感谢-pr)
-- [Changelog](#changelog)
-- [Github](#github)
-- [License](#license)
+- [leek-fund（韭菜盒子）](#leek-fund韭菜盒子)
+  - [Table of contents](#table-of-contents)
+  - [功能特性](#功能特性)
+  - [安装使用](#安装使用)
+  - [插件介绍](#插件介绍)
+  - [插件设置](#插件设置)
+  - [交流群](#交流群)
+  - [赞助支持一下！](#赞助支持一下)
+  - [Todo List](#todo-list)
+  - [感谢 PR](#感谢-pr)
+  - [Changelog](#changelog)
+  - [Github](#github)
+  - [License](#license)
 
 > 投资其实就是一次心态修炼，稳住心态长期投资都会有收益的！！
 
@@ -50,9 +53,11 @@
 - 自定义涨跌图标（吃面、吃肉、烤韭菜、烤肉、喝酒）
 - 基金持仓金额设置（用于动态计算盈亏）
 - 基金盈亏展示（根据实时基金涨跌情况动态实时计算盈亏）
+- 支持维护持仓成本价，自动计算收益率 `v1.6.7`
 - 基金趋势统计图
 - 股票支持分组展示（A 股、港股、美股）
 - 股票涨跌提醒设置
+- 状态栏、侧栏支持自定义模板格式
 - 持续更新……（欢迎 PR 和 Star >>> [Github 源码](https://github.com/giscafer/leek-fund)）
 
 ## 安装使用
@@ -97,6 +102,7 @@
 ## 感谢 PR
 
 - [iporer](https://github.com/iporer)
+- [zqjimlove](https://github.com/zqjimlove)
 - [zomixi](https://github.com/zomixi)
 - [httpcheck](https://github.com/httpcheck)
 - [JayHuangTnT](https://github.com/JayHuangTnT) （:heart: Logo Designer）
@@ -104,7 +110,6 @@
 - [SubinY](https://github.com/SubinY)
 - [gordongxm](https://github.com/gordongxm)
 - [chen86860](https://github.com/chen86860)
-- [zqjimlove](https://github.com/zqjimlove)
 
 更多贡献者 [contributors](https://github.com/giscafer/leek-fund/graphs/contributors)，欢迎来贡献 PR~
 

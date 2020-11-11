@@ -5,7 +5,7 @@
  *-------------------------------------------------------------*/
 
 import { window, workspace } from 'vscode';
-import { clean, uniq } from './utils';
+import { clean, uniq, events } from './utils';
 
 export class BaseConfig {
   static getConfig(key: string, defaultValue?: any): any {
@@ -15,6 +15,7 @@ export class BaseConfig {
   }
 
   static setConfig(cfgKey: string, cfgValue: Array<any> | string | number | Object) {
+    events.emit('updateConfig:' + cfgKey, cfgValue);
     const config = workspace.getConfiguration();
     return config.update(cfgKey, cfgValue, true);
   }
@@ -102,32 +103,6 @@ export class LeekFundConfig extends BaseConfig {
       if (cb && typeof cb === 'function') {
         cb(code);
       }
-    });
-  }
-
-  static setStockRemindCfg(code: string, remindPriceStr: string) {
-    let configObj: Record<string, Record<string, number[]>> = this.getConfig(
-      'leek-fund.stocksRemind',
-      {}
-    );
-
-    const remindPriceConfig: Record<string, number[]> = { price: [], percent: [] };
-    remindPriceStr.split(',').forEach((price: string) => {
-      if (price[price.length - 1] === '%') {
-        price = price.substring(0, price.length - 1);
-        if (!/[+-]/.test(price[0])) {
-          price = '+' + price;
-        }
-        remindPriceConfig.percent.push(parseFloat(price));
-      } else {
-        remindPriceConfig.price.push(parseFloat(price));
-      }
-    });
-
-    configObj[code] = remindPriceConfig;
-
-    this.setConfig('leek-fund.stocksRemind', configObj).then(() => {
-      window.showInformationMessage(`Stock successfully set to Remind.`);
     });
   }
 

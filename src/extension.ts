@@ -15,19 +15,18 @@ import { registerViewEvent } from './registerCommand';
 import { HolidayHelper } from './shared/holidayHelper';
 import { LeekFundConfig } from './shared/leekConfig';
 import { SortType } from './shared/typed';
-import { isStockTime } from './shared/utils';
+import { formatDate, isStockTime } from './shared/utils';
 import { StatusBar } from './statusbar/statusBar';
-import { updateAmount } from './webview/setAmount';
+import { cacheFundAmountData, updateAmount } from './webview/setAmount';
+import { cacheStocksRemindData } from './webview/setStocksRemind';
 
 let loopTimer: NodeJS.Timer | null = null;
 let fundTreeView: TreeView<any> | null = null;
 let stockTreeView: TreeView<any> | null = null;
-// this method is called when your extension is activated
-// your extension is activated the very first time the command is executed
+
 export function activate(context: ExtensionContext) {
-  // Use the console to output diagnostic information (console.log) and errors (console.error)
-  // This line of code will only be executed once when your extension is activated
   console.log('🐥Congratulations, your extension "leek-fund" is now active!');
+  globalState.context = context;
 
   let intervalTimeConfig = LeekFundConfig.getConfig('leek-fund.interval', 5000);
   let intervalTime = intervalTimeConfig;
@@ -73,10 +72,17 @@ export function activate(context: ExtensionContext) {
   // loop
   const loopCallback = () => {
     if (isStockTime()) {
+      // 重置定时器
       if (intervalTime !== intervalTimeConfig) {
         intervalTime = intervalTimeConfig;
         setIntervalTime();
         return;
+      }
+      if (fundTreeView?.visible) {
+        // fix https://github.com/giscafer/leek-fund/issues/78
+        if (globalState.fundAmountCacheDate !== formatDate(new Date())) {
+          updateAmount();
+        }
       }
       if (stockTreeView?.visible || fundTreeView?.visible) {
         nodeStockProvider.refresh();
@@ -87,6 +93,7 @@ export function activate(context: ExtensionContext) {
       }
     } else {
       console.log('StockMarket Closed! Polling closed!');
+      // 闭市时增加轮询间隔时长
       if (intervalTime === intervalTimeConfig) {
         intervalTime = intervalTimeConfig * 100;
         setIntervalTime();
@@ -133,10 +140,20 @@ export function activate(context: ExtensionContext) {
 function setGlobalVariable() {
   const iconType = LeekFundConfig.getConfig('leek-fund.iconType') || 'arrow';
   globalState.iconType = iconType;
+
   const fundAmount = LeekFundConfig.getConfig('leek-fund.fundAmount') || {};
-  globalState.fundAmount = fundAmount;
+  cacheFundAmountData(fundAmount);
+
+  const stocksRemind = LeekFundConfig.getConfig('leek-fund.stocksRemind') || {};
+  cacheStocksRemindData(stocksRemind);
+
   const showEarnings = LeekFundConfig.getConfig('leek-fund.showEarnings');
   globalState.showEarnings = showEarnings;
+
+  const remindSwitch = LeekFundConfig.getConfig('leek-fund.stockRemindSwitch');
+  globalState.remindSwitch = remindSwitch;
+
+  globalState.labelFormat = LeekFundConfig.getConfig('leek-fund.labelFormat');
 }
 
 // this method is called when your extension is deactivated
