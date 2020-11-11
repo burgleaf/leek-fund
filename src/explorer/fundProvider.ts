@@ -1,7 +1,8 @@
-import { Event, EventEmitter, TreeDataProvider, TreeItem } from 'vscode';
+import { Event, EventEmitter, TreeDataProvider, TreeItem, TreeItemCollapsibleState } from 'vscode';
 import { LeekFundConfig } from '../shared/leekConfig';
+import globalState from '../globalState';
 import { LeekTreeItem } from '../shared/leekTreeItem';
-import { SortType } from '../shared/typed';
+import { SortType,defaultFundInfo,FundCategory } from '../shared/typed';
 import FundService from './fundService';
 
 export class FundProvider implements TreeDataProvider<LeekTreeItem> {
@@ -21,17 +22,36 @@ export class FundProvider implements TreeDataProvider<LeekTreeItem> {
     this._onDidChangeTreeData.fire(undefined);
   }
 
-  getChildren(): LeekTreeItem[] | Thenable<LeekTreeItem[]> {
+  getChildren(element?: LeekTreeItem | undefined): LeekTreeItem[] | Thenable<LeekTreeItem[]> {
+    if (!element) {
+      // Root view
+      return this.getRootNodes();
+    }
     const fundCodes = LeekFundConfig.getConfig('leek-fund.funds') || [];
     return this.service.getData(fundCodes, this.order);
   }
 
-  getParent(element: LeekTreeItem): LeekTreeItem | null {
-    return null;
+  getParent(element: LeekTreeItem): LeekTreeItem | undefined {
+    return undefined;
   }
 
   getTreeItem(element: LeekTreeItem): TreeItem {
-    return element;
+    if (!element.isCategory) {
+      return element;
+    } else {
+      return {
+        id: element.id,
+        label: element.info.name,
+        // tooltip: this.getSubCategoryTooltip(element),
+        collapsibleState:
+          element.id === FundCategory.STOCK
+            ? TreeItemCollapsibleState.Expanded
+            : TreeItemCollapsibleState.Collapsed,
+        // iconPath: this.parseIconPathFromProblemState(element),
+        command: undefined,
+        contextValue: element.contextValue,
+      };
+    }
   }
 
   changeOrder(): void {
@@ -47,4 +67,33 @@ export class FundProvider implements TreeDataProvider<LeekTreeItem> {
     LeekFundConfig.setConfig('leek-fund.fundSort', this.order);
     this.refresh();
   }
+
+  
+  //基金分类
+  getRootNodes(): LeekTreeItem[] {
+    const nodes = [
+      new LeekTreeItem(
+        Object.assign({ contextValue: 'category' }, defaultFundInfo, {
+          id: FundCategory.BOND,
+          name: `${FundCategory.BOND}${
+            globalState.aStockCount > 0 ? `(${globalState.aStockCount})` : ''
+          }`,
+        }),
+        undefined,
+        true
+      ),
+      new LeekTreeItem(
+        Object.assign({ contextValue: 'category' }, defaultFundInfo, {
+          id: FundCategory.STOCK,
+          name: `${FundCategory.STOCK}${
+            globalState.hkStockCount > 0 ? `(${globalState.hkStockCount})` : ''
+          }`,
+        }),
+        undefined,
+        true
+      ),
+    ];
+      return nodes;
+    }
+     
 }

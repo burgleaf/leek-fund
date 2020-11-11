@@ -106,6 +106,14 @@
         }
       },
       {
+        "command": "leek-fund.setFundCategory",
+        "title": "设置基金分类",
+        "icon": {
+          "light": "resources/light/amount.svg",
+          "dark": "resources/dark/amount.svg"
+        }
+      },
+      {
         "command": "leek-fund.setFundTop",
         "title": "基金置顶",
         "icon": {
@@ -231,6 +239,11 @@
         },
         {
           "command": "leek-fund.setFundAmount",
+          "when": "view == leekFundView.fund",
+          "group": "navigation"
+        },
+        {
+          "command": "leek-fund.setFundCategory",
           "when": "view == leekFundView.fund",
           "group": "navigation"
         },

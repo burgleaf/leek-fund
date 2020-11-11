@@ -202,6 +202,17 @@ export function registerViewEvent(
     }
     setAmount(fundService.fundList);
   });
+  // 设置基金分类
+  commands.registerCommand('leek-fund.setFundCategory', () => {
+    if (fundService.fundList.length === 0) {
+      window.showWarningMessage('数据刷新中，请重试！');
+      return;
+    }
+    setAmount(fundService.fundList);
+  });
+
+
+  
   commands.registerCommand('leek-fund.stockTrendPic', (target) => {
     const { code, name, type, symbol } = target.info;
     stockTrendPic(code, name, `${type}${symbol}`);

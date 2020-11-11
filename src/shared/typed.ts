@@ -66,3 +66,9 @@ export enum StockCategory {
   HK = 'HK Stock',
   NODATA = 'Not Support Stock',
 }
+
+
+export enum FundCategory {
+  BOND = '债券型',
+  STOCK = '股票型',
+}
