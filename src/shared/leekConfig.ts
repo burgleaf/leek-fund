@@ -14,7 +14,7 @@ export class BaseConfig {
     return value === undefined ? defaultValue : value;
   }
 
-  static setConfig(cfgKey: string, cfgValue: Array<any> | string | number | Object) {
+  static setConfig(cfgKey: string, cfgValue: Array<any> | string | number | Object ) {
     events.emit('updateConfig:' + cfgKey, cfgValue);
     const config = workspace.getConfiguration();
     return config.update(cfgKey, cfgValue, true);
@@ -41,6 +41,9 @@ export class LeekFundConfig extends BaseConfig {
     super();
   }
 
+  
+
+
   // Fund Begin
   static updateFundCfg(codes: string, cb?: Function) {
     this.updateConfig('leek-fund.funds', codes.split(',')).then(() => {
@@ -56,6 +59,26 @@ export class LeekFundConfig extends BaseConfig {
       window.showInformationMessage(`Fund Successfully delete.`);
       if (cb && typeof cb === 'function') {
         cb(code);
+      }
+    });
+  }
+
+  static removeFundCategoryCfg(name: string, cb?: Function){
+    this.removeConfig('leek-fund.fundCategorys', name).then(() => {
+      window.showInformationMessage(`Fund Successfully delete.`);
+      if (cb && typeof cb === 'function') {
+        cb(name);
+      }
+    });
+  }
+
+  static setFundCategoryCfg(name: string, cb?: Function){
+    let configArr: string[] = this.getConfig('leek-fund.fundCategorys');
+    configArr = [name, ...configArr.filter((item) => item !== name)];
+    this.setConfig('leek-fund.fundCategorys', configArr).then(() => {
+      window.showInformationMessage(`Fund Category successfully add.`);
+      if (cb && typeof cb === 'function') {
+        cb(name);
       }
     });
   }

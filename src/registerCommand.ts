@@ -64,6 +64,60 @@ export function registerViewEvent(
       });
     });
   });
+  commands.registerCommand('leek-fund.setFundCategory', (target) => {
+    /* if (!service.fundSuggestList.length) {
+      service.getFundSuggestList();
+      window.showInformationMessage(`获取基金数据中，请稍后再试`);
+      return;
+    } */
+
+    window.showQuickPick([
+      { label: '添加新的基金分类', description: 'addFundCategory' },
+    ],
+      { placeHolder: '请输入添加分类的名称' })
+      .then((categoryObj) => {
+        if (!categoryObj) {
+          return;
+        }
+        
+        console.log(categoryObj)
+        console.log(target)
+
+        if(categoryObj.description === 'addFundCategory'){
+            commands.executeCommand('leek-fund.addFundCategory',target);
+        }
+
+      });
+  });
+
+
+  context.subscriptions.push(
+    commands.registerCommand('leek-fund.addFundCategory', (target) => {
+      window
+        .showInputBox({ placeHolder: '请输入新分类名称' })
+        .then(async (name) => {
+          if (!name) {
+            return;
+          }
+          let categoryArr = LeekFundConfig.getConfig('leek-fund.fundCategorys') || [];
+          if (categoryArr.includes(name)) {
+            window.showInformationMessage(`${name} 已存在，无需添加`);
+            return;
+          }
+          try {
+              categoryArr = [name,...categoryArr]
+              LeekFundConfig.setConfig('leek-fund.fundCategorys', categoryArr).then(() => {
+                target.category = name;
+              });
+          } catch (e) {
+            window.showErrorMessage(`获取用户（${name}）信息失败`);
+          }
+        });
+    })
+   );
+
+
+
   commands.registerCommand('leek-fund.sortFund', () => {
     fundProvider.changeOrder();
     fundProvider.refresh();
@@ -175,17 +229,8 @@ export function registerViewEvent(
     }
     setAmount(fundService.fundList);
   });
-  // 设置基金分类
-  commands.registerCommand('leek-fund.setFundCategory', () => {
-    if (fundService.fundList.length === 0) {
-      window.showWarningMessage('数据刷新中，请重试！');
-      return;
-    }
-    setAmount(fundService.fundList);
-  });
 
 
-  
   commands.registerCommand('leek-fund.stockTrendPic', (target) => {
     const { code, name, type, symbol } = target.info;
     stockTrendPic(code, name, `${type}${symbol}`);

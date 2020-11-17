@@ -105,14 +105,7 @@
           "dark": "resources/dark/amount.svg"
         }
       },
-      {
-        "command": "leek-fund.setFundCategory",
-        "title": "设置基金分类",
-        "icon": {
-          "light": "resources/light/amount.svg",
-          "dark": "resources/dark/amount.svg"
-        }
-      },
+     
       {
         "command": "leek-fund.setFundTop",
         "title": "基金置顶",
@@ -124,6 +117,10 @@
       {
         "command": "leek-fund.deleteFund",
         "title": "删除基金"
+      },
+      {
+        "command": "leek-fund.setFundCategory",
+        "title": "基金分类"
       },
       {
         "command": "leek-fund.viewFundHistory",
@@ -247,11 +244,6 @@
           "group": "navigation"
         },
         {
-          "command": "leek-fund.setFundCategory",
-          "when": "view == leekFundView.fund",
-          "group": "navigation"
-        },
-        {
           "command": "leek-fund.refreshStock",
           "when": "view == leekFundView.stock",
           "group": "navigation"
@@ -307,6 +299,11 @@
           "command": "leek-fund.deleteFund",
           "when": "view == leekFundView.fund",
           "group": "group4"
+        },
+        {
+          "command": "leek-fund.setFundCategory",
+          "when": "view == leekFundView.fund",
+          "group": "group5"
         },
         {
           "command": "leek-fund.setStockTop",
@@ -370,6 +367,11 @@
             "005963"
           ],
           "description": "配置需要监控的基金代码（建议通过界面新增）"
+        },
+        "leek-fund.fundCategorys": {
+          "type": "array",
+          "default": [],
+          "description": "配置基金分类"
         },
         "leek-fund.stocksRemind": {
           "type": "object",
